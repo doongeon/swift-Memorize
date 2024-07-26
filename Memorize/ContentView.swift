@@ -7,15 +7,67 @@
 import SwiftUI
 
 struct ContentView: View {
-    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍"]
+    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍", "🥑", "🍈", "🥝", "🥭", "🥥", "🫒"]
+    @State var numCards: Int = 4
     
     var body: some View {
-        HStack {
-            
-            ForEach(fruits.indices, id: \.self){
-                index in CardView(content: fruits[index])
-            }
+        VStack{
+            title
+            cards
+            Spacer()
+            cardCountAdjuster
         }
+        .padding()
+    }
+    
+    var title: some View {
+        Text("Memorize!")
+            .font(.largeTitle)
+    }
+    
+    var cards: some View {
+        ScrollView {
+            LazyVGrid(columns: [
+                GridItem(.adaptive(minimum: 60)),
+                GridItem(.adaptive(minimum: 60)),
+            ], spacing: 20) {
+                ForEach(0..<numCards, id: \.self){
+                    index in CardView(content: fruits[index])
+                }
+            }
+            .padding()
+        }
+    }
+    
+    var cardCountAdjuster: some View {
+        HStack {
+            cardRemover
+            Spacer()
+            cardAdder
+        }
+        .padding()
+    }
+    
+    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
+        Button(
+            action: {
+                numCards += offset
+            },
+            label: {
+                Image(systemName: symbol)
+            }
+        )
+        .imageScale(.large)
+        .font(.title)
+        .disabled(numCards + offset < 1 || numCards + offset > fruits.count)
+    }
+    
+    var cardRemover: some View {
+        cardCountAdjuster(by: -1, symbol: "minus.circle.fill")
+    }
+    
+    var cardAdder: some View {
+        cardCountAdjuster(by: +1, symbol: "plus.circle.fill")
     }
     
 }
@@ -28,23 +80,20 @@ struct CardView: View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: 12)
             
-            if(isFaceUp) {
+            Group {
                 base
-                    .foregroundColor(.white)
+                    .fill(.white)
                 base
-                    .stroke(.orange, lineWidth: 2)
+                    .stroke(.red, lineWidth: 2)
                 Text(content).font(.largeTitle)
-                
             }
-            else {
-                base
-                    .foregroundColor(.orange)
-            }
+            
+            base.fill(.red).opacity(isFaceUp ? 0 : 1)
         }
-        .padding()
         .onTapGesture {
             isFaceUp.toggle()
         }
+        .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
     }
 }
 
