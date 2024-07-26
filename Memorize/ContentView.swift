@@ -65,7 +65,7 @@ struct ContentView: View {
         )
         .imageScale(.large)
         .font(.title)
-        .disabled(numCards + offset < 1 || numCards + offset >= fruits.count)
+        .disabled(numCards + offset < 0 || numCards + offset >= fruits.count)
     }
     
     var cardRemover: some View {
