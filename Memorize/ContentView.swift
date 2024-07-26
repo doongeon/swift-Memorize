@@ -25,14 +25,20 @@ struct ContentView: View {
             .font(.largeTitle)
     }
     
+    func acquireCardItems() -> Array<String> {
+        Array(fruits[0...numCards]) + Array(fruits[0...numCards])
+    }
+    
     var cards: some View {
         ScrollView {
+            let cardItems = acquireCardItems().shuffled()
+            
             LazyVGrid(columns: [
                 GridItem(.adaptive(minimum: 60)),
                 GridItem(.adaptive(minimum: 60)),
             ], spacing: 20) {
-                ForEach(0..<numCards, id: \.self){
-                    index in CardView(content: fruits[index])
+                ForEach(0..<cardItems.count, id: \.self){
+                    index in CardView(content: cardItems[index])
                 }
             }
             .padding()
@@ -59,7 +65,7 @@ struct ContentView: View {
         )
         .imageScale(.large)
         .font(.title)
-        .disabled(numCards + offset < 1 || numCards + offset > fruits.count)
+        .disabled(numCards + offset < 1 || numCards + offset >= fruits.count)
     }
     
     var cardRemover: some View {
