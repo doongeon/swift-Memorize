@@ -1,37 +1,43 @@
 //
 //  ContentView.swift
-//  Memorize
-//
+//  Memorized//
 //  Created by 나동건 on 7/25/24.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍"]
+    
     var body: some View {
         HStack {
-            CardView(isFaceUp: true)
-            CardView()
-            CardView()
+            
+            ForEach(fruits.indices, id: \.self){
+                index in CardView(content: fruits[index])
+            }
         }
     }
     
 }
 
 struct CardView: View {
-    @State var isFaceUp: Bool = false
+    let content: String
+    @State var isFaceUp: Bool = true
     
     var body: some View {
         ZStack {
+            let base = RoundedRectangle(cornerRadius: 12)
+            
             if(isFaceUp) {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                base
                     .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                base
                     .stroke(.orange, lineWidth: 2)
-                Text("🍋").font(.largeTitle)
+                Text(content).font(.largeTitle)
+                
             }
             else {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                base
                     .foregroundColor(.orange)
             }
         }
