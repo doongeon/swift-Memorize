@@ -7,26 +7,82 @@
 import SwiftUI
 
 struct ContentView: View {
-    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍", "🥑", "🍈", "🥝", "🥭", "🥥", "🫒"]
-    @State var numCards: Int = 4
+    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍", "🥑", "🍈", "🥝", "🍊", "🥥", "🫒"]
+    let tropical: Array<String> = ["🌺", "🌴","🍹","🐠", "🏝️", "🍋‍🟩", "🦜", "🦩", "🏖️", "🥭"]
+    let winter: Array<String> = ["❄️", "☃️","🎅","🧣", "🏂", "🎿", "🧦", "🛷", "🌨️", "🧤"]
+    
+    enum cardThemes {
+        case fruits, tropical, winter
+    }
+    
+    @State var theme = cardThemes.fruits
+    @State var numCards: Int = 8
     
     var body: some View {
         VStack{
             title
             cards
             Spacer()
-            cardCountAdjuster
+//            cardCountAdjuster
+            themeSelector
+
         }
-        .padding()
+    }
+    
+    var themeSelector: some View {
+        HStack(spacing: 40) {
+            fruitThemeSelector
+            tropicalThemeSelector
+            winterThemeSelector
+        }
+    }
+    
+    func themeSelector(theme selectedTheme: cardThemes, symbol: String , content: String) -> some View {
+        Button (
+            action: {
+                theme = selectedTheme
+            },
+            label: {
+                VStack{
+                    Text(symbol)
+                        .font(.largeTitle)
+                    Text(content)
+                }
+            }
+        )
+    }
+    
+    var fruitThemeSelector: some View {
+        themeSelector(theme: cardThemes.fruits, symbol: "🍋", content: "Fruit")
+    }
+    
+    var tropicalThemeSelector: some View {
+        themeSelector(theme: cardThemes.tropical, symbol: "🌺", content: "Tropical")
+    }
+    
+    var winterThemeSelector: some View {
+        themeSelector(theme: cardThemes.winter, symbol: "❄️", content: "Winter")
     }
     
     var title: some View {
         Text("Memorize!")
             .font(.largeTitle)
+            .padding()
     }
     
     func acquireCardItems() -> Array<String> {
-        Array(fruits[0...numCards]) + Array(fruits[0...numCards])
+        var cardItems: Array<String> = []
+        switch(theme) {
+            case cardThemes.fruits:
+                cardItems = fruits
+                break
+            case cardThemes.tropical:
+                cardItems = tropical
+                break
+            case cardThemes.winter:
+                cardItems = winter
+        }
+        return Array(cardItems[0..<numCards] + cardItems[0..<numCards])
     }
     
     var cards: some View {
@@ -34,9 +90,8 @@ struct ContentView: View {
             let cardItems = acquireCardItems().shuffled()
             
             LazyVGrid(columns: [
-                GridItem(.adaptive(minimum: 60)),
-                GridItem(.adaptive(minimum: 60)),
-            ], spacing: 20) {
+                GridItem(.adaptive(minimum: 55)),
+            ], spacing: 7) {
                 ForEach(0..<cardItems.count, id: \.self){
                     index in CardView(content: cardItems[index])
                 }
