@@ -11,7 +11,7 @@ class EmojiMemorizeGame: ObservableObject {
     private static let tropical: Array<String> = ["🌺", "🌴","🍹","🐠", "🏝️", "🍋‍🟩", "🦜", "🦩", "🏖️", "🥭"]
     
     private static func createMemorizeGame() -> MemorizeGame<String> {
-        return MemorizeGame<String>(numOfPairOfCards: 6) { itemIndex in
+        return MemorizeGame<String>(numOfPairOfCards: 8) { itemIndex in
             if(tropical.indices.contains(itemIndex)) {
                 return tropical[itemIndex]
             } else {

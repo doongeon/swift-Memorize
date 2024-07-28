@@ -13,12 +13,6 @@ struct EmojiMemoryGameView: View {
     let tropical: Array<String> = ["🌺", "🌴","🍹","🐠", "🏝️", "🍋‍🟩", "🦜", "🦩", "🏖️", "🥭"]
     let winter: Array<String> = ["❄️", "☃️","🎅","🧣", "🏂", "🎿", "🧦", "🛷", "🌨️", "🧤"]
     
-    enum cardThemes {
-        case fruits, tropical, winter
-    }
-    
-    @State var theme = cardThemes.fruits
-    
     var body: some View {
         VStack{
             title
@@ -76,8 +70,10 @@ struct CardView: View {
             }
             
             base.fill(.red).opacity(card.isFaceUp ? 0 : 1)
+            
         }
         .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+        .opacity(card.isMatch ? 0 : 1)
     }
 }
 

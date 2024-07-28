@@ -17,12 +17,29 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
         }
     }
     
+    var indexOfOneAnyOnlyFaceUpCard: Int? {
+        get { cards.indices.filter { cards[$0].isFaceUp }.only }
+        set { cards.indices.forEach { cards[$0].isFaceUp = ( newValue == $0 ) } }
+    }
+    
     mutating func shuffle() {
         cards.shuffle()
     }
     
-    func choose() -> Void {
-        
+    mutating func choose(_ card: Card) -> Void {
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }) {
+            if(!cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatch) {
+                if let indexOfPotentialMatchUpCard = indexOfOneAnyOnlyFaceUpCard {
+                    if(cards[indexOfPotentialMatchUpCard].content == cards[chosenIndex].content) {
+                        cards[indexOfPotentialMatchUpCard].isMatch = true
+                        cards[chosenIndex].isMatch = true
+                    }
+                } else {
+                    indexOfOneAnyOnlyFaceUpCard = chosenIndex
+                }
+                cards[chosenIndex].isFaceUp = true
+            }
+        }
     }
     
     struct Card: Equatable, Identifiable, CustomDebugStringConvertible {
@@ -34,5 +51,11 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
         var debugDescription: String {
             "\(id): \(content) \(isFaceUp ? "up" : "down")"
         }
+    }
+}
+
+extension Array {
+    var only: Element? {
+        return count == 1 ? first : nil
     }
 }
