@@ -31,7 +31,10 @@ struct EmojiMemoryGameView: View {
                 columns: [GridItem(.adaptive(minimum: 85), spacing: 0)],
                 spacing: 0) {
                     ForEach(viewModel.cards){ card in
-                    CardView(card)
+                        CardView(
+                            card: card,
+                            colorTheme: ColorConverter.convert(viewModel.colorTheme)
+                        )
                         .padding(4)
                         .foregroundColor(ColorConverter.convert(viewModel.colorTheme))
                         .onTapGesture {
@@ -68,9 +71,11 @@ struct EmojiMemoryGameView: View {
 
 struct CardView: View {
     var card: MemorizeGame<String>.Card
+    var colorTheme: Color
     
-    init(_ card: MemorizeGame<String>.Card) {
+    init(card: MemorizeGame<String>.Card, colorTheme: Color) {
         self.card = card
+        self.colorTheme = colorTheme
     }
     
     var body: some View {
@@ -86,7 +91,12 @@ struct CardView: View {
                     .aspectRatio(1, contentMode: .fit)
             ) : nil
                 
-            base.fill().opacity(card.isFaceUp ? 0 : 1)
+            base.fill(
+                LinearGradient(
+                    colors: [colorTheme, .white],
+                    startPoint: UnitPoint(),
+                    endPoint: UnitPoint(x: 1, y: 1))
+            ).opacity(card.isFaceUp ? 0 : 1)
             
         }
         .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)

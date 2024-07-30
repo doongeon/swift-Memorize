@@ -51,7 +51,7 @@ class EmojiMemorizeGame: ObservableObject {
     
     private static func createMemorizeGame(_ theme: Theme<String>) -> MemorizeGame<String> {
         return MemorizeGame<String>(
-            numOfPairOfCards: 8,
+            numOfPairOfCards: theme.pairCount,
             cardContents: theme.getContents()
         )
     }

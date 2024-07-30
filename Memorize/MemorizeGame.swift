@@ -76,15 +76,29 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
     }
 }
 
-struct Theme<CardContent> {
+struct Theme<CardContent> where CardContent: Hashable {
+    static func validateColor(_ themeColor: String) -> String {
+        if(!["red", "pink", "grey", "blue", "green", "purple"].contains(themeColor)) {
+            return "red"
+        }
+        
+        return themeColor
+    }
+    
+    static func validateContents(_ themeContents: Array<CardContent>) -> Array<CardContent> {
+        return Array(Set(themeContents))
+    }
+    
     let name: String;
     private let contents: Array<CardContent>
+    let pairCount: Int
     let color: String
     
     init(name: String, contents: Array<CardContent>, color: String) {
         self.name = name
-        self.contents = contents
-        self.color = color
+        self.contents = Theme<CardContent>.validateContents(contents)
+        self.pairCount = Int.random(in: 2..<contents.count)
+        self.color = Theme<CardContent>.validateColor(color)
     }
     
     func getContents() -> Array<CardContent> {
