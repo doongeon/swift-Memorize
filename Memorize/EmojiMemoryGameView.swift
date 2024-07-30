@@ -9,18 +9,21 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemorizeGame
     
-    let fruits: Array<String> = ["🍋", "🍉","🍌","🍍", "🥑", "🍈", "🥝", "🍊", "🥥", "🫒"]
-    let tropical: Array<String> = ["🌺", "🌴","🍹","🐠", "🏝️", "🍋‍🟩", "🦜", "🦩", "🏖️", "🥭"]
-    let winter: Array<String> = ["❄️", "☃️","🎅","🧣", "🏂", "🎿", "🧦", "🛷", "🌨️", "🧤"]
-    
     var body: some View {
         VStack{
             title
             cards
                 .animation(.default, value: viewModel.cards)
-            Button("Shuffle") {
-                viewModel.shuffle()
-            }
+            Button(action: {
+                viewModel.newGame()
+            }, label: {
+                VStack(spacing: 10) {
+                    Image(systemName: "gamecontroller.fill")
+                        .imageScale(.medium)
+                        .font(.title)
+                    Text("New Game")
+                }
+            })
         }
     }
     
@@ -38,6 +41,7 @@ struct EmojiMemoryGameView: View {
                     ForEach(viewModel.cards){ card in
                     CardView(card)
                         .padding(4)
+                        .foregroundColor(ColorConverter.convert(viewModel.colorTheme))
                         .onTapGesture {
                             viewModel.choose(card)
                         }
@@ -60,20 +64,41 @@ struct CardView: View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: 12)
             
-            Group {
-                base.fill(.white)
-                base.stroke(.red, lineWidth: 2)
+            base.fill(.white)
+            base.stroke(lineWidth: 2)
+            card.isFaceUp ? (
                 Text(card.content)
                     .font(.system(size: 200))
                     .minimumScaleFactor(0.001)
                     .aspectRatio(1, contentMode: .fit)
-            }
-            
-            base.fill(.red).opacity(card.isFaceUp ? 0 : 1)
+            ) : nil
+                
+            base.fill().opacity(card.isFaceUp ? 0 : 1)
             
         }
         .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
         .opacity(card.isMatch ? 0 : 1)
+    }
+}
+
+struct ColorConverter {
+    static func convert(_ color: String) -> Color {
+        switch(color) {
+        case "red":
+            return .red
+        case "pink":
+            return .pink
+        case "grey":
+            return .gray
+        case "blue":
+            return .blue
+        case "green":
+            return .green
+        case "purple":
+            return .purple
+        default:
+            return .black
+        }
     }
 }
 
