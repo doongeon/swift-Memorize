@@ -69,6 +69,14 @@ class EmojiMemorizeGame: ObservableObject {
         model.cards
     }
     
+    var score: Int {
+        model.score
+    }
+    
+    var themeName: String {
+        theme.name
+    }
+    
     var colorTheme: String {
         theme.color
     }

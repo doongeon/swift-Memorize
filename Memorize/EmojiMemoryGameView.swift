@@ -14,16 +14,8 @@ struct EmojiMemoryGameView: View {
             title
             cards
                 .animation(.default, value: viewModel.cards)
-            Button(action: {
-                viewModel.newGame()
-            }, label: {
-                VStack(spacing: 10) {
-                    Image(systemName: "gamecontroller.fill")
-                        .imageScale(.medium)
-                        .font(.title)
-                    Text("New Game")
-                }
-            })
+            stat
+            newGame
         }
     }
     
@@ -49,6 +41,27 @@ struct EmojiMemoryGameView: View {
             }
             .padding()
         }
+    }
+    
+    var stat: some View {
+        HStack{
+            Text("Score \(viewModel.score)")
+            Spacer()
+            Text(viewModel.themeName)
+        }.padding()
+    }
+    
+    var newGame: some View {
+        Button(action: {
+            viewModel.newGame()
+        }, label: {
+            VStack(spacing: 10) {
+                Image(systemName: "gamecontroller.fill")
+                    .imageScale(.medium)
+                    .font(.title)
+                Text("New Game")
+            }
+        })
     }
     
 }
