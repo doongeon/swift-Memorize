@@ -14,11 +14,11 @@ class ThemeStore: ObservableObject {
         self.name = name
     }
     
-    @Published var themes = MemorizeTheme.builtins
+    @Published var themes = EmojiTheme.builtins
     @Published var cursorIndex = 0
 }
 
-extension MemorizeTheme {
+extension EmojiTheme {
     func getColor() -> Color {
         switch(color) {
         case .blue:

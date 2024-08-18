@@ -7,10 +7,9 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-    @EnvironmentObject var themeStore: ThemeStore
     @ObservedObject var emojiMemorizeGame: EmojiMemorizeGame
     
-    init(theme: MemorizeTheme) {
+    init(theme: EmojiTheme) {
         emojiMemorizeGame = EmojiMemorizeGame(theme: theme)
     }
     
@@ -23,8 +22,13 @@ struct EmojiMemoryGameView: View {
                 spacing: 0
             ) {
                 ForEach(emojiMemorizeGame.cards) { card in
-                    view(for: card)
-                        .padding(5)
+                        view(for: card)
+                            .onTapGesture {
+                                withAnimation {
+                                    emojiMemorizeGame.choose(card: card)
+                                }
+                            }
+                            .padding(5)
                 }
             }
         }
@@ -39,7 +43,9 @@ struct EmojiMemoryGameView: View {
                 .font(.system(size: 1000))
                 .minimumScaleFactor(0.001)
                 .aspectRatio(1, contentMode: .fit)
+            
             base.fill(card.isFaceUp ? .clear : .green)
+                .opacity(card.isMatch ? 0 : 1)
         }
         .aspectRatio(2/3, contentMode: .fit)
         .foregroundColor(.green)
@@ -58,8 +64,6 @@ struct EmojiMemoryGameView: View {
         return cardHeight * aspect
     }
 }
-
-
 
 #Preview {
     EmojiMemoryGameView(theme: ThemeStore(name: "Preview").themes.first!)

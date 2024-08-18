@@ -13,7 +13,7 @@ typealias Card = Game.Card
 class EmojiMemorizeGame: ObservableObject {
     @Published private var memorizeGame: Game
     
-    init(theme: MemorizeTheme = MemorizeTheme(name: "default", color: MemorizeTheme.colors.blue, emojis: "⚠️")) {
+    init(theme: EmojiTheme = EmojiTheme(name: "default", color: EmojiTheme.colors.blue, emojis: "⚠️")) {
         memorizeGame = Game(cardContents: theme.emojis.contentify())
     }
     

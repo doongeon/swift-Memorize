@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MainView: View {
+    typealias Theme = EmojiTheme
+    
     @ObservedObject var game: EmojiMemorizeGame
     @EnvironmentObject var themeStore: ThemeStore
     
@@ -15,27 +17,46 @@ struct MainView: View {
         self.game = game
     }
     
+    @State private var showEditor = false
+    
     var body: some View {
         NavigationStack {
-            Text("choose theme")
-                .foregroundStyle(.gray)
-            ThemeGrid(items: themeStore.themes) { theme in
-                NavigationLink {
-                    EmojiMemoryGameView(theme: theme)
-                        .navigationTitle(theme.name)
-                } label: {
-                    NavigateCard(theme: theme)
-                        .padding(5)
-                        .contextMenu {
-                            ActionButton(title: "Delete", systemImage: "trash", role: .destructive)
-                            ActionButton(title: "Edit", systemImage: "pencil")
-                        }
+            List {
+                ForEach(themeStore.themes) {theme in
+                    NavigationLink(value: theme) {
+                        label(for: theme)
+                            .contextMenu {
+                                ActionButton(title: "Delete", systemImage: "trash", role: .destructive) {
+                                    
+                                }
+                                ActionButton(title: "Edit", systemImage: "pencil") {
+                                    showEditor = true
+                                }
+                            }
+                    }
                 }
             }
-            .padding()
-            
+            .navigationDestination(for: Theme.self) { theme in
+                EmojiMemoryGameView(theme: theme)
+            }
             .navigationTitle("Memorize")
-            Spacer()
+            .sheet(isPresented: $showEditor) {
+                ThemeEditView()
+            }
+        }
+    }
+    
+    func label(for theme: Theme) -> some View {
+        Label {
+            HStack {
+                Text(theme.name)
+                Spacer()
+                Text("\(theme.emojis.count * 2) cards")
+                    .foregroundStyle(.gray)
+            }
+            
+        } icon: {
+            Text(theme.icon)
         }
     }
 }
@@ -62,55 +83,27 @@ struct ThemeGrid<Item: Identifiable, ItemView: View>: View   {
     }
 }
 
-struct NavigateCard: View {
-    let theme: MemorizeTheme
-    
-    var body: some View {
-        ZStack {
-            let base = RoundedRectangle(cornerRadius: 15)
-            base
-                .stroke(theme.getColor(), lineWidth: 5)
-                .opacity(0.5)
-            VStack {
-                emoji
-                description
-            }
-            .padding()
-        }
-    }
-    
-    var emoji: some View {
-        Text(String(theme.emojis.first!))
-            .font(.system(size: 1000))
-            .minimumScaleFactor(0.001)
-            .aspectRatio(1, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-    }
-    
-    var description: some View {
-        Group {
-            Text(theme.name)
-                .font(.title)
-                .foregroundStyle(.black)
-            Text("\(theme.emojis.count * 2) cards")
-                .foregroundStyle(.black)
-        }
-    }
-}
-
 struct ActionButton: View {
     let title: String
     let systemImage: String?
     let role: ButtonRole?
+    let action: () -> Void
     
-    init(title: String, systemImage: String? = nil, role: ButtonRole? = nil) {
+    init(
+        title: String,
+        systemImage: String? = nil,
+        role: ButtonRole? = nil,
+        action: @escaping () -> Void
+    ) {
         self.title = title
         self.systemImage = systemImage
         self.role = role
+        self.action = action
     }
     
     var body: some View {
         Button(role: role) {
-            print(title)
+            action()
         } label: {
             if let systemImage {
                 HStack {
