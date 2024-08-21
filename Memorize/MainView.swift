@@ -30,6 +30,9 @@ struct MainView: View {
                             }
                     }
                 }
+                .onDelete { indexSet in
+                    themeStore.remove(indexSet: indexSet)
+                }
             }
             .navigationDestination(for: Theme.self) { theme in
                 EmojiMemoryGameView(theme: theme)

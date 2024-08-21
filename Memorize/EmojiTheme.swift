@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EmojiTheme: Identifiable, Hashable {
+struct EmojiTheme: Identifiable, Codable, Hashable {
     var name: String
     var color: colors
     var emojis: String
@@ -40,7 +40,7 @@ struct EmojiTheme: Identifiable, Hashable {
         ]
     }
     
-    enum colors {
+    enum colors: Codable {
         case red 
         case blue
         case green
