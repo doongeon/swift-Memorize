@@ -12,8 +12,14 @@ struct ThemeEditView: View {
     
     @Binding var showEditor: Bool
     
-    @State var nameToChange = ""
     @State var emojisToAdd = ""
+    
+    enum Focused {
+        case name
+        case emojis
+    }
+    
+    @FocusState var focused: Focused?
     
     var body: some View {
         NavigationStack {
@@ -25,7 +31,9 @@ struct ThemeEditView: View {
                 toolbarView
             }
             .navigationTitle("Edit")
-            
+        }
+        .onAppear() {
+            setFocus()
         }
     }
     
@@ -35,6 +43,7 @@ struct ThemeEditView: View {
                 "Name",
                 text: $themeStore.themes[themeStore.cursorIndex].name
             )
+            .focused($focused, equals: .name)
         }
     }
     
@@ -44,8 +53,14 @@ struct ThemeEditView: View {
                 .onChange(of: emojisToAdd) { oldValue, newValue in
                     addEmoji(newValue: newValue)
                 }
+                .focused($focused, equals: .emojis)
             Emojis()
         }
+    }
+    
+    func addEmoji(newValue: String) -> Void {
+        emojisToAdd = newValue.unique()
+        themeStore.themes[themeStore.cursorIndex].addEmojis(emojisToAdd)
     }
     
     var toolbarView: some View {
@@ -54,11 +69,6 @@ struct ThemeEditView: View {
         } label: {
             Text("Done")
         }
-    }
-    
-    func addEmoji(newValue: String) -> Void {
-        emojisToAdd = newValue.unique()
-        themeStore.themes[themeStore.cursorIndex].addEmojis(emojisToAdd)
     }
     
     func Emojis() -> some View {
@@ -88,6 +98,14 @@ struct ThemeEditView: View {
             withAnimation {
                 themeStore.themes[themeStore.cursorIndex].remove(emoji)
             }
+        }
+    }
+    
+    func setFocus() -> Void {
+        if themeStore.current.name.isEmpty {
+            focused = .name
+        } else {
+            focused = .emojis
         }
     }
 }

@@ -26,13 +26,7 @@ struct MainView: View {
                     NavigationLink(value: theme) {
                         label(for: theme)
                             .contextMenu {
-                                ActionButton(title: "Delete", systemImage: "trash", role: .destructive) {
-                                    
-                                }
-                                ActionButton(title: "Edit", systemImage: "pencil") {
-                                    themeStore.setCursor(to: theme)
-                                    showEditor = true
-                                }
+                                contextMenu(for: theme)
                             }
                     }
                 }
@@ -40,11 +34,40 @@ struct MainView: View {
             .navigationDestination(for: Theme.self) { theme in
                 EmojiMemoryGameView(theme: theme)
             }
+            .toolbar() {
+                toolbarView
+            }
             .navigationTitle("Memorize")
             .sheet(isPresented: $showEditor) {
                 ThemeEditView(showEditor: $showEditor)
                     .font(nil)
             }
+        }
+    }
+    
+    
+    private func contextMenu(for theme: EmojiTheme) -> some View {
+        Group {
+            ActionButton(title: "Delete", systemImage: "trash", role: .destructive) {
+                
+            }
+            ActionButton(title: "Edit", systemImage: "pencil") {
+                themeStore.setCursor(to: theme)
+                showEditor = true
+            }
+        }
+    }
+    
+    private var toolbarView: some View {
+        Menu {
+            ActionButton(title: "New Theme", systemImage: "plus") {
+                themeStore.addNewTheme()
+                themeStore.setCursor(to: themeStore.themes.last!)
+                showEditor = true
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.title)
         }
     }
     
@@ -59,28 +82,6 @@ struct MainView: View {
             
         } icon: {
             Text(theme.icon)
-        }
-    }
-}
-
-struct ThemeGrid<Item: Identifiable, ItemView: View>: View   {
-    let contents: (Item) -> ItemView
-    let items: Array<Item>
-    
-    init(items: Array<Item>, content: @escaping (Item) -> ItemView) {
-        self.items = items
-        self.contents = content
-    }
-    
-    var body: some View {
-        LazyVGrid(
-            columns: [GridItem(spacing: 0), GridItem(spacing: 0)],
-            alignment: .leading,
-            spacing: 0
-        ) {
-            ForEach(items) {item in
-                contents(item)
-            }
         }
     }
 }
