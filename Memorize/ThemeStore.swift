@@ -14,12 +14,14 @@ class ThemeStore: ObservableObject {
         self.name = name
     }
     
-    @Published var themes = EmojiTheme.builtins
-    @Published var cursorIndex = 0
-    
-    var current: EmojiTheme {
-        themes[cursorIndex]
+    @Published var themes = EmojiTheme.builtins {
+        didSet {
+            if themes.isEmpty {
+                themes = oldValue
+            }
+        }
     }
+    @Published var cursorIndex = 0
     
     // MARK: - Intents
     
