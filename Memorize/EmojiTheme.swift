@@ -20,6 +20,18 @@ struct EmojiTheme: Identifiable, Hashable {
     }
     var id = UUID()
     
+    mutating func addEmojis(_ emojisToAdd: String) -> Void {
+        emojisToAdd.forEach({
+            if !emojis.contains($0) {
+                emojis = String($0) + emojis
+            }
+        })
+    }
+    
+    mutating func remove(_ emojiToRemove: String) -> Void {
+        emojis = emojis.filter({String($0) != emojiToRemove})
+    }
+    
     static var builtins: Array<EmojiTheme> {
         [
             EmojiTheme(name: "Tropical", color: colors.red, emojis: "🌴🥥🍍🏝️🌺🌞🐚"),

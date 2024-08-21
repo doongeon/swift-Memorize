@@ -30,6 +30,7 @@ struct MainView: View {
                                     
                                 }
                                 ActionButton(title: "Edit", systemImage: "pencil") {
+                                    themeStore.setCursor(to: theme)
                                     showEditor = true
                                 }
                             }
@@ -42,6 +43,7 @@ struct MainView: View {
             .navigationTitle("Memorize")
             .sheet(isPresented: $showEditor) {
                 ThemeEditView()
+                    .font(nil)
             }
         }
     }

@@ -16,6 +16,16 @@ class ThemeStore: ObservableObject {
     
     @Published var themes = EmojiTheme.builtins
     @Published var cursorIndex = 0
+    
+    // MARK: - Intents
+    
+    func setCursor(to theme: EmojiTheme) -> Void {
+        if let indexOfTheme = themes.firstIndex(where: {$0.id == theme.id}) {
+            cursorIndex = indexOfTheme
+        } else {
+            cursorIndex = 0
+        }
+    }
 }
 
 extension EmojiTheme {
