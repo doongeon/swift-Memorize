@@ -34,20 +34,56 @@ struct MainView: View {
             .navigationDestination(for: Theme.self) { theme in
                 EmojiMemoryGameView(theme: theme)
             }
-            .toolbar() {
-                toolbarView
-            }
-            .navigationTitle("Memorize")
+            .navigationTitle("Themes")
             .sheet(isPresented: $showEditor) {
-                ThemeEditView(
-                    theme: $themeStore.themes[themeStore.cursorIndex],
-                    showEditor: $showEditor
-                )
-                    .font(nil)
+                editor
             }
+            
+            Spacer()
+            addTheme
         }
+        .listStyle(.plain)
     }
     
+    var editor: some View {
+        ThemeEditView(
+            theme: $themeStore.themes[themeStore.cursorIndex],
+            showEditor: $showEditor
+        )
+            .font(nil)
+    }
+    
+    var addTheme: some View {
+        return HStack(alignment: .lastTextBaseline) {
+            Spacer()
+            Button {
+                addNewTheme()
+            } label: {
+                label()
+            }
+            .padding()
+        }
+        .padding()
+        
+        func label() -> some View {
+            return ZStack {
+                Circle()
+                    .fill(.blue)
+                    .frame(minWidth: 50, maxWidth: 50)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay(
+                        Image(systemName: "plus")
+                            .foregroundColor(.white)
+                    )
+            }
+        }
+        
+        func addNewTheme() -> Void {
+            themeStore.addNewTheme()
+            themeStore.setCursor(to: themeStore.themes.last!)
+            showEditor = true
+        }
+    }
     
     private func contextMenu(for theme: EmojiTheme) -> some View {
         Group {
@@ -61,30 +97,15 @@ struct MainView: View {
         }
     }
     
-    private var toolbarView: some View {
-        Menu {
-            ActionButton(title: "New Theme", systemImage: "plus") {
-                themeStore.addNewTheme()
-                themeStore.setCursor(to: themeStore.themes.last!)
-                showEditor = true
-            }
-        } label: {
-            Image(systemName: "ellipsis")
-                .font(.title)
-        }
-    }
-    
     func label(for theme: Theme) -> some View {
-        Label {
+        VStack(alignment: .leading) {
+            Text(theme.name)
             HStack {
-                Text(theme.name)
-                Spacer()
-                Text("\(theme.emojis.count * 2) cards")
+                Text("\(theme.emojis.count) pairs")
                     .foregroundStyle(.gray)
+                Spacer(minLength: 40)
+                Text(theme.emojis).lineLimit(1)
             }
-            
-        } icon: {
-            Text(theme.icon)
         }
     }
 }
