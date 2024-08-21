@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ThemeEditView: View {
-    @EnvironmentObject var themeStore: ThemeStore
-    
+    @Binding var theme: EmojiTheme
     @Binding var showEditor: Bool
     
     @State var emojisToAdd = ""
@@ -41,7 +40,7 @@ struct ThemeEditView: View {
         Section(header: Text("Name")) {
             TextField(
                 "Name",
-                text: $themeStore.themes[themeStore.cursorIndex].name
+                text: $theme.name
             )
             .focused($focused, equals: .name)
         }
@@ -60,7 +59,7 @@ struct ThemeEditView: View {
     
     func addEmoji(newValue: String) -> Void {
         emojisToAdd = newValue.unique()
-        themeStore.themes[themeStore.cursorIndex].addEmojis(emojisToAdd)
+        theme.addEmojis(emojisToAdd)
     }
     
     var toolbarView: some View {
@@ -80,7 +79,7 @@ struct ThemeEditView: View {
                 spacing: 0
             ) {
                 ForEach(
-                    themeStore.themes[themeStore.cursorIndex].emojis.map({String($0)}),
+                    theme.emojis.map({String($0)}),
                     id: \.self
                 ) { emoji in
                     Text(emoji)
@@ -96,13 +95,13 @@ struct ThemeEditView: View {
         
         func removeEmoji(_ emoji: String) -> Void {
             withAnimation {
-                themeStore.themes[themeStore.cursorIndex].remove(emoji)
+                theme.remove(emoji)
             }
         }
     }
     
     func setFocus() -> Void {
-        if themeStore.current.name.isEmpty {
+        if theme.name.isEmpty {
             focused = .name
         } else {
             focused = .emojis

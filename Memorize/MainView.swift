@@ -39,7 +39,10 @@ struct MainView: View {
             }
             .navigationTitle("Memorize")
             .sheet(isPresented: $showEditor) {
-                ThemeEditView(showEditor: $showEditor)
+                ThemeEditView(
+                    theme: $themeStore.themes[themeStore.cursorIndex],
+                    showEditor: $showEditor
+                )
                     .font(nil)
             }
         }
