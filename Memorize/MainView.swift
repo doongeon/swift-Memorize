@@ -42,7 +42,7 @@ struct MainView: View {
             }
             .navigationTitle("Memorize")
             .sheet(isPresented: $showEditor) {
-                ThemeEditView()
+                ThemeEditView(showEditor: $showEditor)
                     .font(nil)
             }
         }

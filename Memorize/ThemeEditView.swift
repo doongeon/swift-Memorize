@@ -10,29 +10,49 @@ import SwiftUI
 struct ThemeEditView: View {
     @EnvironmentObject var themeStore: ThemeStore
     
+    @Binding var showEditor: Bool
+    
     @State var nameToChange = ""
     @State var emojisToAdd = ""
-    
     
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Name")) {
-                    TextField(
-                        "Name",
-                        text: $themeStore.themes[themeStore.cursorIndex].name
-                    )
-                }
-                
-                Section(header: Text("Emojis")) {
-                    TextField("Add emoji", text: $emojisToAdd)
-                        .onChange(of: emojisToAdd) { oldValue, newValue in
-                            addEmoji(newValue: newValue)
-                        }
-                    Emojis()
-                }
+                nameSection
+                emojiSection
+            }
+            .toolbar() {
+                toolbarView
             }
             .navigationTitle("Edit")
+            
+        }
+    }
+    
+    var nameSection: some View {
+        Section(header: Text("Name")) {
+            TextField(
+                "Name",
+                text: $themeStore.themes[themeStore.cursorIndex].name
+            )
+        }
+    }
+    
+    var emojiSection: some View {
+        Section(header: Text("Emojis")) {
+            TextField("Add emoji", text: $emojisToAdd)
+                .onChange(of: emojisToAdd) { oldValue, newValue in
+                    addEmoji(newValue: newValue)
+                }
+            Emojis()
+        }
+    }
+    
+    var toolbarView: some View {
+        Button {
+            showEditor = false
+        } label: {
+            Text("Done")
         }
     }
     
@@ -42,10 +62,13 @@ struct ThemeEditView: View {
     }
     
     func Emojis() -> some View {
-        VStack(alignment: .trailing) {
+        return VStack(alignment: .trailing) {
             Text("tap to remove")
                 .foregroundColor(.gray)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 40), spacing: 0)],
+                spacing: 0
+            ) {
                 ForEach(
                     themeStore.themes[themeStore.cursorIndex].emojis.map({String($0)}),
                     id: \.self
@@ -54,10 +77,16 @@ struct ThemeEditView: View {
                         .padding(5)
                         .onTapGesture {
                             withAnimation {
-                                themeStore.themes[themeStore.cursorIndex].remove(emoji)
+                                removeEmoji(emoji)
                             }
                         }
                 }
+            }
+        }
+        
+        func removeEmoji(_ emoji: String) -> Void {
+            withAnimation {
+                themeStore.themes[themeStore.cursorIndex].remove(emoji)
             }
         }
     }
@@ -79,6 +108,14 @@ extension String {
 
 
 
-#Preview {
-    ThemeEditView()
-}
+//#Preview {
+//    struct Preview: View {
+//        @State var showEditor = true
+//        
+//        var body: some View {
+//            ThemeEditView(showEditor: $showEditor)
+//        }
+//    }
+//    
+//    return Preview()
+//}
