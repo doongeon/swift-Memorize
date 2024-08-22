@@ -8,7 +8,8 @@
 import Foundation
 
 struct MemorizeGame<CardContent: Equatable> {
-    var cards: Array<Card>
+    private(set) var cards: Array<Card>
+    private(set) var score: Int = 0
     
     init(cardContents: Array<CardContent>) {
         cards = []
@@ -16,11 +17,11 @@ struct MemorizeGame<CardContent: Equatable> {
             cards.append(Card(content: content))
             cards.append(Card(content: content))
         }
-        cards.shuffle()
+//        cards.shuffle()
     }
     
     var indexOfOnlyFaceUpCard: Int? {
-        get { cards.filter({$0.isFaceUp}).count > 1 ? nil : cards.indices.first(where: {cards[$0].isFaceUp}) }
+        get { cards.filter({$0.isFaceUp && !$0.isMatch}).count > 1 ? nil : cards.indices.first(where: {cards[$0].isFaceUp && !cards[$0].isMatch}) }
         set { cards.indices.forEach({cards[$0].isFaceUp = (newValue == $0)}) }
     }
     
@@ -31,6 +32,14 @@ struct MemorizeGame<CardContent: Equatable> {
                     if cards[indexOfCardToCompare].content == cards[indexOfChosenCard].content {
                         cards[indexOfCardToCompare].isMatch = true
                         cards[indexOfChosenCard].isMatch = true
+                        score += 4
+                    } else {
+                        if cards[indexOfCardToCompare].hasBeenSeen {
+                            score -= 2
+                        }
+                        if cards[indexOfChosenCard].hasBeenSeen {
+                            score -= 2
+                        }
                     }
                 } else {
                     indexOfOnlyFaceUpCard = indexOfChosenCard
@@ -40,11 +49,25 @@ struct MemorizeGame<CardContent: Equatable> {
         }
     }
     
-    struct Card: Identifiable {
+    struct Card: Equatable, Identifiable, Hashable {
         let content: CardContent
-        var isFaceUp: Bool = false
+        var isFaceUp: Bool = false {
+            didSet {
+                if isMatch {
+                    isFaceUp = true
+                }
+                if oldValue, !isFaceUp {
+                    hasBeenSeen = true
+                }
+            }
+        }
         var isMatch: Bool = false
+        var hasBeenSeen = false
         
         let id = UUID()
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
     }
 }

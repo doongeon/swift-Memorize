@@ -21,6 +21,10 @@ class EmojiMemorizeGame: ObservableObject {
         memorizeGame.cards
     }
     
+    var score: Int {
+        memorizeGame.score
+    }
+    
     // MARK: - Intents
     
     func choose(card: Card) -> Void {
