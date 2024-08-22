@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ThemeEditView: View {
+    @EnvironmentObject var themeStore: ThemeStore
+    
     @Binding var theme: EmojiTheme
     @Binding var showEditor: Bool
     
+    @State var colorToChange: Color = .white
     @State var emojisToAdd = ""
     
     enum Focused {
@@ -23,6 +26,7 @@ struct ThemeEditView: View {
     var body: some View {
         NavigationStack {
             Form {
+                colorSection
                 nameSection
                 emojiSection
             }
@@ -33,6 +37,17 @@ struct ThemeEditView: View {
         }
         .onAppear() {
             setFocus()
+        }
+    }
+    
+    var colorSection: some View {
+        Section(header: Text("Color")) {
+            ColorPicker(selection: $colorToChange, supportsOpacity: false) {
+                Text("테마 색상")
+            }
+            .onChange(of: colorToChange) {
+                theme.setColor(rgb: colorToChange.uiColor().rgb)
+            }
         }
     }
     

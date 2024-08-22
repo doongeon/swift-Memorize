@@ -9,7 +9,10 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var emojiMemorizeGame: EmojiMemorizeGame
     
+    var theme: EmojiTheme
+    
     init(theme: EmojiTheme) {
+        self.theme = theme
         emojiMemorizeGame = EmojiMemorizeGame(theme: theme)
     }
     
@@ -44,11 +47,15 @@ struct EmojiMemoryGameView: View {
                 .minimumScaleFactor(0.001)
                 .aspectRatio(1, contentMode: .fit)
             
-            base.fill(card.isFaceUp ? .clear : .green)
-                .opacity(card.isMatch ? 0 : 1)
+            base.fill()
+                .opacity(card.isFaceUp ? 0 : 1)
         }
         .aspectRatio(2/3, contentMode: .fit)
-        .foregroundColor(.green)
+        .foregroundColor(theme.getColor())
+        .rotation3DEffect(
+            .degrees(card.isFaceUp ? 0 : 180),
+            axis: (x: 0.0, y: 1.0, z: 0.0)
+        )
     }
     
     func cardWidth(cardsCount: Int, in geometry: GeometryProxy, aspect: CGFloat = 2/3) -> CGFloat {

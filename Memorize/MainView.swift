@@ -102,13 +102,13 @@ struct MainView: View {
     
     func label(for theme: Theme) -> some View {
         VStack(alignment: .leading) {
-            Text(theme.name)
             HStack {
+                Text(theme.name)
+                Spacer()
                 Text("\(theme.emojis.count) pairs")
                     .foregroundStyle(.gray)
-                Spacer(minLength: 40)
-                Text(theme.emojis).lineLimit(1)
             }
+            Text(theme.emojis).lineLimit(1)
         }
     }
 }

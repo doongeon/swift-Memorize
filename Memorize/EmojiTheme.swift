@@ -9,7 +9,7 @@ import Foundation
 
 struct EmojiTheme: Identifiable, Codable, Hashable {
     var name: String
-    var color: colors
+    var color: Int
     var emojis: String
     var icon: String {
         if let firstEmoji = emojis.first {
@@ -19,6 +19,10 @@ struct EmojiTheme: Identifiable, Codable, Hashable {
         }
     }
     var id = UUID()
+    
+    mutating func setColor(rgb newColor: Int) -> Void {
+        color = newColor
+    }
     
     mutating func addEmojis(_ emojisToAdd: String) -> Void {
         emojisToAdd.forEach({
@@ -34,15 +38,9 @@ struct EmojiTheme: Identifiable, Codable, Hashable {
     
     static var builtins: Array<EmojiTheme> {
         [
-            EmojiTheme(name: "Tropical", color: colors.red, emojis: "🌴🥥🍍🏝️🌺🌞🐚"),
-            EmojiTheme(name: "Ocean", color: colors.blue, emojis: "🌊🏝️🐠🐬🐳🐚🏖️⛵🚤"),
-            EmojiTheme(name: "Asia", color: colors.green, emojis: "🏯🎎🥋🐉🍜🍣🌸")
+            EmojiTheme(name: "Tropical", color: 0xC7253E, emojis: "🌴🥥🍍🏝️🌺🌞🐚"),
+            EmojiTheme(name: "Ocean", color: 0x134B70, emojis: "🌊🏝️🐠🐬🐳🐚🏖️⛵🚤"),
+            EmojiTheme(name: "Asia", color: 0xEECAD5, emojis: "🏯🎎🥋🐉🍜🍣🌸")
         ]
-    }
-    
-    enum colors: Codable {
-        case red 
-        case blue
-        case green
     }
 }
